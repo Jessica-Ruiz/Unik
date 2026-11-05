@@ -1,0 +1,6 @@
+<?php
+require_once __DIR__.'/config/database.php';require_once __DIR__.'/includes/functions.php';require_login();
+$s=$pdo->prepare("SELECT * FROM orders WHERE user_id=? ORDER BY created_at DESC");$s->execute([current_user()['id']]);$orders=$s->fetchAll();$pageTitle='Mis pedidos | UNIK';require __DIR__.'/includes/header.php';?>
+<section class="page-intro compact"><span class="eyebrow">TU EXPERIENCIA UNIK</span><h1>Mis <span>pedidos</span></h1><p>Consulta tus compras y revisa el estado de cada pedido.</p></section>
+<?php if(!$orders): ?><div class="empty-panel"><div class="empty-icon">◇</div><h2>Aún no tienes pedidos</h2><p>Cuando realices tu primera compra, aparecerá aquí.</p><a class="btn btn-primary" href="catalog.php">Explorar catálogo</a></div><?php else: ?><div class="orders-list"><?php foreach($orders as $o): ?><article class="order-card"><div><span class="eyebrow">PEDIDO #UNIK-<?= str_pad((string)$o['id'],5,'0',STR_PAD_LEFT) ?></span><h3><?= date('d/m/Y',strtotime($o['created_at'])) ?></h3><p><?= e($o['shipping_address']) ?></p></div><div class="order-status"><span class="status-dot"></span><?= e($o['status']) ?></div><strong><?= money($o['total']) ?></strong></article><?php endforeach; ?></div><?php endif; ?>
+<?php require __DIR__.'/includes/footer.php'; ?>
